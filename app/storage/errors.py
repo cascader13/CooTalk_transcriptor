@@ -1,0 +1,2 @@
+class AudioNotFoundError(Exception):
+    pass

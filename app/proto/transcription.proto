@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package transcription.v1;
+
+// Сейчас реализуется сервисом распознавания.
+service TranscriptionService {
+  rpc AddTranscriptionTask(TranscriptionTask) returns (Accepted);
+}
+
+// Сейчас реализуется MServer.
+service TranscriptionResultReceiver {
+  rpc ReturnTranscriptionResult(TranscriptionResult) returns (Accepted);
+}
+
+// Подтверждает приём сообщения, а не завершение распознавания.
+message Accepted {}
+
+message TranscriptionTask {
+  string taskId = 1;
+  // Ключ аудиофайла: File.storageKey в хранилище MServer.
+  string storageKey = 2;
+}
+
+message TranscriptionResult {
+  string taskId = 1;
+
+  oneof outcome {
+    TranscriptionOutput success = 2;
+    TranscriptionError failure = 3;
+  }
+}
+
+message TranscriptionOutput {
+  string text = 1;
+  string model = 2;
+  double processingTimeSeconds = 3;
+  double audioDurationSeconds = 4;
+  double realTimeFactor = 5;
+}
+
+message TranscriptionError {
+  string code = 1;
+  string message = 2;
+}

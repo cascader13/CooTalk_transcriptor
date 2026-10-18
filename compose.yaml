@@ -1,0 +1,18 @@
+services:
+  transcriptor:
+    build: .
+    image: cootalk-transcriptor:cpu
+    ports:
+      - "${GRPC_HOST_PORT:-50051}:50051"
+    environment:
+      ENDPOINT: ${S3_ENDPOINT:-http://192.168.0.103:8333}
+      GRPC_BIND: "[::]:50051"
+      RESULT_RECEIVER_TARGET: "192.168.0.103:50052"
+    volumes:
+      - ./app/.env:/srv/app/.env:ro
+      - huggingface-cache:/home/app/.cache/huggingface
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  huggingface-cache:
